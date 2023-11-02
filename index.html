@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrasi dan List Pendaftar</title>
+    <style>
+        /* Style untuk tab */
+        .tab {
+            display: none;
+        }
+
+        /* Style untuk tombol tab */
+        .tab-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        /* Style untuk form */
+        #registrasi {
+            display: block;
+        }
+
+        /* Style untuk tabel */
+        #list-pendaftar {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Registrasi dan List Pendaftar</h1>
+    <button class="tab-button" onclick="openTab('registrasi')">Registrasi</button>
+    <button class="tab-button" onclick="openTab('list-pendaftar')">List Pendaftar</button>
+
+    <!-- Tab Registrasi -->
+    <div class="tab" id="registrasi">
+        <h2>Registrasi</h2>
+        <form id="registration-form">
+            <label for="nama">Nama:</label>
+            <input type="text" id="nama" name="nama" required minlength="10"><br><br>
+
+            <label for="umur">Umur:</label>
+            <input type="number" id="umur" name="umur" required min="25"><br><br>
+
+            <label for="uang-sangu">Uang Sangu (Rp.):</label>
+            <input type="number" id="uang-sangu" name="uang-sangu" required min="100000" max="1000000"><br><br>
+
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+
+    <!-- Tab List Pendaftar -->
+    <div class="tab" id="list-pendaftar">
+        <h2>List Pendaftar</h2>
+        <p>Rata-rata pendaftar memiliki uang saku sebesar <span id="average-umur"></span> tahun dan rata-rata umur <span id="average-uang-saku"></span> rupiah.</p>
+        <table id="pendaftar-table">
+            <tr>
+                <th>Nama</th>
+                <th>Umur</th>
+                <th>Uang Sangu (Rp.)</th>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        function openTab(tabName) {
+            var tabs = document.getElementsByClassName('tab');
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].style.display = 'none';
+            }
+
+            document.getElementById(tabName).style.display = 'block';
+        }
+
+        // Daftar pendaftar
+        var pendaftar = [];
+
+        document.getElementById('registration-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            var nama = document.getElementById('nama').value;
+            var umur = parseInt(document.getElementById('umur').value);
+            var uangSangu = parseInt(document.getElementById('uang-sangu').value);
+
+            // Cek kriteria
+            if (nama.length < 10 || umur < 25 || uangSangu < 100000 || uangSangu > 1000000) {
+                alert('Data tidak memenuhi kriteria.');
+                return;
+            }
+
+            // Simpan data pendaftar
+            pendaftar.push({ nama: nama, umur: umur, uangSangu: uangSangu });
+
+            // Reset form
+            document.getElementById('nama').value = '';
+            document.getElementById('umur').value = '';
+            document.getElementById('uang-sangu').value = '';
+
+            // Update tabel List Pendaftar
+            updatePendaftarTable();
+
+            // Hitung rata-rata umur dan uang saku
+            var totalUmur = 0;
+            var totalUangSangu = 0;
+
+            for (var i = 0; i < pendaftar.length; i++) {
+                totalUmur += pendaftar[i].umur;
+                totalUangSangu += pendaftar[i].uangSangu;
+            }
+
+            var averageUmur = totalUmur / pendaftar.length;
+            var averageUangSangu = totalUangSangu / pendaftar.length;
+
+            document.getElementById('average-umur').textContent = averageUmur.toFixed(2);
+            document.getElementById('average-uang-saku').textContent = averageUangSangu.toFixed(2);
+        });
+
+        function updatePendaftarTable() {
+            var table = document.getElementById('pendaftar-table');
+            table.innerHTML = '<tr><th>Nama</th><th>Umur</th><th>Uang Sangu (Rp.)</th></tr>';
+
+            for (var i = 0; i < pendaftar.length; i++) {
+                var row = table.insertRow(i + 1);
+                row.insertCell(0).textContent = pendaftar[i].nama;
+                row.insertCell(1).textContent = pendaftar[i].umur;
+                row.insertCell(2).textContent = pendaftar[i].uangSangu;
+            }
+        }
+    </script>
+</body>
+</html>
